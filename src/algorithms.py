@@ -7,7 +7,7 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 import multiprocessing as mp
 from collections import defaultdict
 
-from utils import *
+from .utils import *
 
 
 def generate_parameters_random_walk(workers):
@@ -22,7 +22,7 @@ def generate_parameters_random_walk(workers):
         logging.info('Executing layer {}...'.format(layer))            
         weights = restoreVariableFromDisk('distances_nets_weights-layer-'+str(layer))
     
-        for k,list_weights in weights.iteritems():
+        for k,list_weights in weights.items():
             if(layer not in sum_weights):
                 sum_weights[layer] = 0
             if(layer not in amount_edges):
@@ -43,7 +43,6 @@ def generate_parameters_random_walk(workers):
     saveVariableOnDisk(average_weight,'average_weight')
 
     amount_neighbours = {}
-
     layer = 0
     while(isPickle('distances_nets_weights-layer-'+str(layer))):
         logging.info('Executing layer {}...'.format(layer))            
@@ -51,7 +50,7 @@ def generate_parameters_random_walk(workers):
 
         amount_neighbours[layer] = {}
 
-        for k,list_weights in weights.iteritems():
+        for k,list_weights in weights.items():
             cont_neighbours = 0
             for w in list_weights:
                 if(w > average_weight[layer]):
@@ -148,7 +147,6 @@ def generate_random_walks_large_graphs(num_walks,walk_length,workers,vertices):
 def generate_random_walks(num_walks,walk_length,workers,vertices):
 
     logging.info('Loading distances_nets on disk...')
-
     graphs = restoreVariableFromDisk('distances_nets_graphs')
     alias_method_j = restoreVariableFromDisk('nets_weights_alias_method_j')
     alias_method_q = restoreVariableFromDisk('nets_weights_alias_method_q')

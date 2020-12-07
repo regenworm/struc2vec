@@ -3,14 +3,14 @@
 
 import argparse, logging
 import numpy as np
-import struc2vec
+from . import struc2vec
 from gensim.models import Word2Vec
 from gensim.models.word2vec import LineSentence
 from time import time
 
-import graph
+from . import graph
 
-logging.basicConfig(filename='struc2vec.log',filemode='w',level=logging.DEBUG,format='%(asctime)s %(message)s')
+logging.basicConfig(filename='struc2vec.log',filemode='w',level=logging.INFO,format='%(asctime)s %(message)s')
 
 def parse_args():
 	'''
@@ -61,9 +61,9 @@ def parse_args():
                       help='optimization 2')
 	parser.add_argument('--OPT3', default=False, type=bool,
                       help='optimization 3')	
-	return parser.parse_args()
+	return parser
 
-def read_graph():
+def read_graph(args):
 	'''
 	Reads the input network.
 	'''
@@ -72,7 +72,7 @@ def read_graph():
 	logging.info(" - Graph loaded.")
 	return G
 
-def learn_embeddings():
+def learn_embeddings(args):
 	'''
 	Learn embeddings by optimizing the Skipgram objective using SGD.
 	'''
@@ -93,7 +93,7 @@ def exec_struc2vec(args):
 	else:
 		until_layer = None
 
-	G = read_graph()
+	G = read_graph(args)
 	G = struc2vec.Graph(G, args.directed, args.workers, untilLayer = until_layer)
 
 	if(args.OPT1):
@@ -120,10 +120,11 @@ def main(args):
 
 	G = exec_struc2vec(args)
 
-	learn_embeddings()
+	learn_embeddings(args)
 
 
 if __name__ == "__main__":
-	args = parse_args()
+	parser = parse_args()
+	args = parser.parse_args()
 	main(args)
 

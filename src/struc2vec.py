@@ -7,10 +7,10 @@ from multiprocessing import Manager
 from time import time
 from collections import deque
 
-from utils import *
-from algorithms import *
-from algorithms_distances import *
-import graph
+from .utils import *
+from .algorithms import *
+from .algorithms_distances import *
+from . import graph
 
 
 class Graph():
@@ -62,6 +62,7 @@ class Graph():
 		degrees = {}
 		degrees_sorted = set()
 		G = self.G
+		print(G.keys)
 		for v in G.keys():
 			degree = len(G[v])
 			degrees_sorted.add(degree)
@@ -196,7 +197,6 @@ class Graph():
 
 
 	def create_distances_network(self):
-
 		with ProcessPoolExecutor(max_workers=1) as executor:
 			job = executor.submit(generate_distances_network,self.workers)
 
@@ -205,12 +205,10 @@ class Graph():
 		return
 
 	def preprocess_parameters_random_walk(self):
-
 		with ProcessPoolExecutor(max_workers=1) as executor:
 			job = executor.submit(generate_parameters_random_walk,self.workers)
 
 			job.result()
-
 		return
 
 
@@ -220,14 +218,15 @@ class Graph():
 		if(len(self.G) > 500000):
 
 			with ProcessPoolExecutor(max_workers=1) as executor:
-				job = executor.submit(generate_random_walks_large_graphs,num_walks,walk_length,self.workers,self.G.keys())
+				keys = list(self.G.keys())
+				job = executor.submit(generate_random_walks_large_graphs,num_walks,walk_length,self.workers,keys)
 
 				job.result()
 
 		else:
-
 			with ProcessPoolExecutor(max_workers=1) as executor:
-				job = executor.submit(generate_random_walks,num_walks,walk_length,self.workers,self.G.keys())
+				keys = list(self.G.keys())
+				job = executor.submit(generate_random_walks,num_walks,walk_length,self.workers,keys)
 
 				job.result()
 
