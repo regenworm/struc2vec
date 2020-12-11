@@ -82,9 +82,9 @@ def learn_embeddings(args):
 	model.wv.save_word2vec_format(args.output)
 	logging.info("Representations created.")
 	
-	return
+	return model
 
-def exec_struc2vec(args):
+def exec_struc2vec(args, G=None):
 	'''
 	Pipeline for representational learning for all nodes in a graph.
 	'''
@@ -93,7 +93,8 @@ def exec_struc2vec(args):
 	else:
 		until_layer = None
 
-	G = read_graph(args)
+	if G is None:
+		G = read_graph(args)
 	G = struc2vec.Graph(G, args.directed, args.workers, untilLayer = until_layer)
 
 	if(args.OPT1):
